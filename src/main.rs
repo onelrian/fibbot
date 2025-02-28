@@ -1,21 +1,19 @@
-use std::env;
-use fibbot::reg::extract_numbers_from_text;
-use fibbot::fib::{fibonacci_iterative};
+use fibbot::fib::fibonacci_iterative;
 use fibbot::github::post_comment;
+use fibbot::reg::extract_numbers_from_text;
+use std::env;
 
 #[tokio::main]
 async fn main() {
     let args: Vec<String> = env::args().collect();
 
-    // GitHub PR URL and token (passed as arguments)
     let pr_url = args.get(1).expect("PR URL is required");
     let token = args.get(2).expect("GitHub token is required");
 
-    let pr_content = "We need to calculate Fibonacci for 10, 15, and 20."; // Simulate PR content
+    let pr_content = "We need to calculate Fibonacci for 10, 15, and 20."; 
 
-    // Extract numbers from PR content
     let numbers = extract_numbers_from_text(pr_content);
-    println!("Numbers extracted from PR: {:?}", numbers); 
+    println!("Numbers extracted from PR: {:?}", numbers);
 
     // Calculate Fibonacci values for extracted numbers
     let mut fibonacci_results = Vec::new();
