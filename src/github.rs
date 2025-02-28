@@ -1,27 +1,24 @@
 use reqwest::Client;
-use serde::Serialize;
+use std::env;
 
-#[derive(Serialize)]
-pub struct Comment {
-    pub body: String,
-}
+pub async fn post_comment(pr_number: u32, token: &str, comment: &str) -> Result<(), reqwest::Error> {
+    let repo = env::var("GITHUB_REPOSITORY").expect("GITHUB_REPOSITORY not set");
+    let url = format!("https://api.github.com/repos/{}/issues/{}/comments", repo, pr_number);
 
-pub async fn post_comment(pr_url: &str, token: &str, comment: &str) -> Result<(), reqwest::Error> {
     let client = Client::new();
-    let api_url = format!("{}/comments", pr_url);
-    let res = client
-        .post(&api_url)
-        .bearer_auth(token)
-        .json(&Comment { body: comment.to_string() })
+    let response = client
+        .post(&url)
+        .header("Authorization", format!("Bearer {}", token))
+        .header("User-Agent", "FibBot")
+        .header("Accept", "application/vnd.github.full+json")
+        .json(&serde_json::json!({ "body": comment }))
         .send()
         .await?;
 
-    if res.status().is_success() {
-        println!("Comment posted successfully!");
+    if response.status().is_success() {
+        println!("✅ Comment posted successfully.");
     } else {
-        let error_message = res.text().await?;
-        eprintln!("Failed to post comment: {}", error_message);
+        eprintln!("❌ Failed to post comment: {:?}", response.text().await?);
     }
-
     Ok(())
 }
