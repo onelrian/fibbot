@@ -31,7 +31,5 @@ jobs:
       - name: Run FibBot
         uses: onelrian/fibbot@main
         with:
-          pr_number: ${{ github.event.pull_request.number }}
-          enable_fib: "true"
-          max_threshold: "100"
-          github_token: ${{ secrets.TOKEN }}
+          entryPoint: "/usr/local/bin/fibbot"
+          args: "${{ github.event.pull_request.number }} ${{ secrets.TOKEN }}"
