@@ -1,26 +1,37 @@
 use std::env;
 use fibbot::reg::extract_numbers_from_text;
+use fibbot::fib::{fibonacci_iterative};
+use fibbot::github::post_comment;
 
-fn main() {
-    let pr_content = "We need to calculate Fibonacci for 10 and 15.";
-
-    let numbers = extract_numbers_from_text(pr_content);
-    println!("{:?}", numbers);
-
+#[tokio::main]
+async fn main() {
     let args: Vec<String> = env::args().collect();
-    let enable_fib = args.get(1).map_or(false, |v| v == "true");
-    let max_threshold: u32 = args
-        .get(2)
-        .unwrap_or(&"10".to_string())
-        .parse()
-        .unwrap_or(10);
 
-    println!("Enable Fibonacci: {}", enable_fib);
-    println!("Max Threshold: {}", max_threshold);
+    // GitHub PR URL and token (passed as arguments)
+    let pr_url = args.get(1).expect("PR URL is required");
+    let token = args.get(2).expect("GitHub token is required");
 
-    if enable_fib {
-        println!("Fibonacci computation enabled up to {}", max_threshold);
-    } else {
-        println!("Fibonacci computation disabled.");
+    let pr_content = "We need to calculate Fibonacci for 10, 15, and 20."; // Simulate PR content
+
+    // Extract numbers from PR content
+    let numbers = extract_numbers_from_text(pr_content);
+    println!("Numbers extracted from PR: {:?}", numbers); 
+
+    // Calculate Fibonacci values for extracted numbers
+    let mut fibonacci_results = Vec::new();
+    for &num in &numbers {
+        let result = fibonacci_iterative(num);
+        fibonacci_results.push((num, result));
+    }
+
+    // Create a result comment
+    let mut comment_body = String::from("Fibonacci Computations:\n");
+    for (num, result) in fibonacci_results {
+        comment_body.push_str(&format!("Fibonacci of {} is: {}\n", num, result));
+    }
+
+    // Post the result as a comment on the PR
+    if let Err(e) = post_comment(pr_url, token, &comment_body).await {
+        eprintln!("Error posting comment: {}", e);
     }
 }
