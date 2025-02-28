@@ -1,21 +1,32 @@
-name: "FibBot Action"
-description: "A GitHub Action written in Rust with input parameters"
-author: "Onel Rian"
-inputs:
-  enable_fib:
-    description: "Enable Fibonacci computation (true/false)"
-    required: true
-    default: "false"
-  max_threshold:
-    description: "Maximum Fibonacci number to compute"
-    required: true
-    default: "10"
-runs:
-  using: "docker"
-  image: "Dockerfile"
-  args:
-    - ${{ inputs.enable_fib }}
-    - ${{ inputs.max_threshold }}
-branding:
-  icon: "activity"
-  color: "blue"
+name: "Run FibBot"
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  run-fibbot:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: actions/setup-rust@v1
+        with:
+          rust-version: 'stable'
+
+      - name: Build the FibBot project
+        run: cargo build --release
+
+      - name: Run FibBot
+        run: |
+          ./target/release/fibbot ${{ github.event.pull_request.number }} ${{ secrets.GITHUB_TOKEN }}

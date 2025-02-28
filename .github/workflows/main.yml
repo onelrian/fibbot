@@ -1,21 +1,29 @@
-name: "Test FibBot Action"
+name: "Run FibBot"
+
 on:
-  push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
+    types: [opened, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: read
 
 jobs:
-  test-action:
+  run-fibbot:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      repository-projects: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run FibBot Action
-        uses: ./
+      - name: Run FibBot
+        uses: onelrian/Fibonacci-bot@main
         with:
-          enable_fib: true
-          max_threshold: 20
+          pr_number: ${{ github.event.pull_request.number }}
+          enable_fib: "true"
+          max_threshold: "100"
+          github_token: ${{ secrets.GITHUB_TOKEN }}  
