@@ -1,0 +1,11 @@
+name: Run Rust Action
+on: [push, pull_request]
+
+jobs:
+  run-action:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Run custom action
+        uses: ./

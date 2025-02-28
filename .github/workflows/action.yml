@@ -1,0 +1,12 @@
+name: "Rust Fibonacci Bot"
+description: "A GitHub Action that calculates Fibonacci numbers using Rust"
+inputs:
+  number:
+    description: "The Fibonacci index to compute"
+    required: true
+outputs:
+  result:
+    description: "The computed Fibonacci number"
+runs:
+  using: "docker"
+  image: "Dockerfile"
