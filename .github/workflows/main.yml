@@ -20,17 +20,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Extract PR message
-        id: pr_message
-        run: |
-          echo "PR_MESSAGE=$(jq --raw-output .pull_request.body $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
-
-      - name: Check extracted PR message
-        run: |
-          echo "PR_MESSAGE: ${{ env.PR_MESSAGE }}"
-
       - name: Run FibBot
         uses: onelrian/fibbot@main
         with:
-          entryPoint: "fibbot"
-          args: ${{ env.PR_MESSAGE }}  # Pass the PR message here
+          pr_number: ${{ github.event.pull_request.number }}
+          enable_fib: "true"
+          max_threshold: "100"
+          github_token: ${{ secrets.GITHUB_TOKEN }}  

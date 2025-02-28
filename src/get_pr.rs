@@ -1,22 +1,14 @@
-use reqwest::Client;
+use octocrab::{Octocrab, models::pulls::PullRequest};
+use std::env;
 
-pub async fn get_pr_body(pr_number: u32, token: &str) -> Result<String, Box<dyn std::error::Error>> {
-    let repo = std::env::var("GITHUB_REPOSITORY")?;
-    let url = format!("https://api.github.com/repos/{}/pulls/{}", repo, pr_number);
+pub async fn get_pr(pr_number: u64) -> Result<String, Box<dyn std::error::Error>> {
+    let octocrab = Octocrab::builder()
+        .personal_token(env::var("GITHUB_TOKEN")?)
+        .build()?;
 
-    let client = Client::new();
-    let response = client
-        .get(&url)
-        .header("User-Agent", "FibBot")
-        .header("Accept", "application/vnd.github.full+json")
-        .bearer_auth(token)
-        .send()
+    let pr: PullRequest = octocrab.pulls("Nkwenti-severian-Ndongtsop", "Fibonacci-bot")
+        .get(pr_number)
         .await?;
 
-    let json: serde_json::Value = response.json().await?;
-    if let Some(body) = json.get("body") {
-        return Ok(body.as_str().unwrap_or("").to_string());
-    }
-
-    Err("Failed to get pull request body".into())
+    Ok(pr.body.unwrap_or_default())  // Assuming the PR body contains the numbers to extract
 }
