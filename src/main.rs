@@ -7,10 +7,15 @@ use std::env;
 async fn main() {
     let args: Vec<String> = env::args().collect();
 
-    let pr_url = args.get(1).expect("PR URL is required");
-    let token = args.get(2).expect("GitHub token is required");
+    if args.len() < 3 {
+        eprintln!("Usage: {} <PR_URL> <GITHUB_TOKEN>", args[0]);
+        std::process::exit(1);
+    }
 
-    let pr_content = "We need to calculate Fibonacci for 10, 15, and 20."; 
+    let pr_url = &args[1];
+    let token = &args[2];
+
+    let pr_content = "We need to calculate Fibonacci for 10, 15, and 20."; // Replace with actual PR content fetching logic
 
     let numbers = extract_numbers_from_text(pr_content);
     println!("Numbers extracted from PR: {:?}", numbers);

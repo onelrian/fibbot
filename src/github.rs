@@ -19,7 +19,8 @@ pub async fn post_comment(pr_url: &str, token: &str, comment: &str) -> Result<()
     if res.status().is_success() {
         println!("Comment posted successfully!");
     } else {
-        eprintln!("Failed to post comment: {}", res.status());
+        let error_message = res.text().await?;
+        eprintln!("Failed to post comment: {}", error_message);
     }
 
     Ok(())
