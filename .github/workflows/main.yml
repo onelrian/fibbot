@@ -1,11 +1,20 @@
-name: Run Rust Action
-on: [push, pull_request]
+name: "FibBot CI"
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   run-action:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Run custom action
-        uses: ./
+
+      - name: Run FibBot Action
+        uses: ./ 
+        with:
+          number: 10
