@@ -20,10 +20,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Cache FibBot Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.fibbot-cache
+          key: fibbot-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            fibbot-${{ runner.os }}-
+
       - name: Run FibBot
         uses: onelrian/fibbot@main
         with:
           pr_number: ${{ github.event.pull_request.number }}
           enable_fib: "true"
           max_threshold: "100"
-          github_token: ${{ secrets.TOKEN }}  
+          github_token: ${{ secrets.TOKEN }}
