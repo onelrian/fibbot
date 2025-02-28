@@ -1,20 +1,33 @@
-# Use the official Rust image from Docker Hub
-FROM rust:latest
+FROM rust:latest as builder
 
-# Set the working directory in the container
+# working directory
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
+# Copy the source code
 COPY . .
 
-# Run the build command
+# Building the application
 RUN cargo build --release
 
-# Check if the fibbot executable exists
-RUN ls -l /app/target/release
+# stage 2
+FROM ubuntu:22.04
 
-# Make sure the fibbot executable is executable
-RUN chmod +x /app/target/release/fibbot
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Set the entrypoint to run the fibbot executable
-CMD ["/app/target/release/fibbot"]
+# working directory
+WORKDIR /app
+
+
+
+COPY --from=builder /app/target/release/fibbot /usr/local/bin/fibbot
+
+
+RUN chmod +x /usr/local/bin/fibbot
+
+
+ENTRYPOINT ["fibbot"]
+
+CMD ["true","10"]   
