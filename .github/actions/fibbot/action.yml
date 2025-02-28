@@ -1,0 +1,19 @@
+name: "FibBot Action"
+description: "A GitHub Action written in Rust"
+author: "Your Name"
+inputs:
+  number:
+    description: "The Fibonacci number to compute"
+    required: true
+    default: "10"
+outputs:
+  result:
+    description: "The computed Fibonacci number"
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.number }}
+branding:
+  icon: "activity"
+  color: "blue"
