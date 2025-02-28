@@ -1,47 +1,41 @@
-use fibbot::fib::fibonacci_iterative;
-use fibbot::github::post_comment;
-use fibbot::reg::extract_numbers_from_text;
-use fibbot::get_pr::get_pr;  // Corrected the import for get_pr
+
 use std::env;
+use fibbot::{fib::fibonacci, get_pr::get_pr, process_pr_results::post_comment};
+use tokio;
 
 #[tokio::main]
 async fn main() {
     let args: Vec<String> = env::args().collect();
 
-    if args.len() < 3 {
-        eprintln!("Usage: {} <PR_NUMBER> <GITHUB_TOKEN>", args[0]);
-        std::process::exit(1);
+    let enable_fib = args.get(1).unwrap_or(&"true".to_string()).to_lowercase() == "true";
+    let max_threshold: u8 = args
+        .get(2)
+        .unwrap_or(&"100".to_string())
+        .parse()
+        .unwrap_or(100);
+
+    println!("FibBot application is running...");
+    println!("Fibonacci Calculation Enabled: {}", enable_fib);
+    println!("Max Threshold is: {}", max_threshold);
+
+    let pr_number: u64 = env::var("PR_NUMBER")
+        .expect("PR_NUMBER not set")
+        .parse::<u64>()
+        .expect("Invalid PR_NUMBER");
+
+    let pr_numbers = get_pr(pr_number).await;
+    println!("Extracted numbers: {:?}", pr_numbers);
+
+    if pr_numbers.is_empty() {
+        println!("No numbers found in this pull_request.");
     }
-
-    let pr_number: u64 = args[1].parse().expect("Invalid PR number");
-    let token = &args[2];
-
-    // Fetch PR content from GitHub
-    let pr_content = match get_pr(pr_number).await {
-        Ok(content) => content,
-        Err(e) => {
-            eprintln!("Error fetching PR content: {}", e);
-            std::process::exit(1);
+    let mut response =
+        String::from("#### Fibonacci output of each number in the pull_request is:\n");
+    for &num in &pr_numbers {
+        let fib = fibonacci(num);
+        response.push_str(&format!("- Fibonacci({}) = {}\n", num, fib));
+    }
+        if let Err(e) = post_comment(&response).await {
+            eprintln!("Error posting comment: {}", e);
         }
-    };
-
-    let numbers = extract_numbers_from_text(&pr_content);
-    println!("Numbers extracted from PR: {:?}", numbers);
-
-    // Calculate Fibonacci for each number extracted
-    let fibonacci_results = numbers.iter().map(|&num| (num, fibonacci_iterative(num))).collect::<Vec<_>>();
-
-    // Prepare the comment body to post
-    let comment_body = fibonacci_results.iter()
-        .fold(String::from("### Fibonacci Computations:\n"), |mut acc, (num, result)| {
-            acc.push_str(&format!("- Fibonacci({}) = {}\n", num, result));
-            acc
-        });
-
-    // Post the results as a comment on the PR
-    if let Err(e) = post_comment(&comment_body).await {
-        eprintln!("Error posting comment: {}", e);
-    } else {
-        println!("✅ Comment posted successfully.");
     }
-}

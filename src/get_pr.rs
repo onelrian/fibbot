@@ -1,14 +1,11 @@
-use octocrab::{Octocrab, models::pulls::PullRequest};
-use std::env;
+use crate::reg::extract_numbers;
 
-pub async fn get_pr(pr_number: u64) -> Result<String, Box<dyn std::error::Error>> {
-    let octocrab = Octocrab::builder()
-        .personal_token(env::var("GITHUB_TOKEN")?)
-        .build()?;
+pub async fn get_pr(pr_number: u64) -> Vec<u32>{
 
-    let pr: PullRequest = octocrab.pulls("Nkwenti-severian-Ndongtsop", "Fibonacci-bot")
-        .get(pr_number)
-        .await?;
-
-    Ok(pr.body.unwrap_or_default())  // Assuming the PR body contains the numbers to extract
-}
+    let files = octocrab::instance().pulls("Nkwenti-severian-Ndongtsop", "Fibonacci-bot").list_files(pr_number).await;
+    let files = files.unwrap().items.first().unwrap().patch.clone().unwrap();
+    println!("Pull Resquest Contents:\n{}",files);
+    let nums = extract_numbers(&files.as_str().to_string());
+    println!("Collected Nums: {nums:?}");
+    nums
+ }

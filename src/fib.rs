@@ -1,9 +1,16 @@
-pub fn fibonacci_iterative(n: i32) -> i32 {
-    let (mut a, mut b) = (0, 1);
-    for _ in 0..n {
-        let temp = a;
-        a = b;
-        b = temp + b;
+pub fn fibonacci(value: u32) -> u128 {
+    if value == 0 {
+        return 0;
+    } else if value == 1 {
+        return 1;
     }
-    a
+
+    let mut a = 0;
+    let mut b = 1;
+    for _ in 2..=value {
+        let temp = a + b;
+        a = b;
+        b = temp;
+    }
+    b
 }

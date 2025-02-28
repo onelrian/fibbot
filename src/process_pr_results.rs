@@ -1,18 +1,35 @@
-use crate::reg::extract_numbers_from_text;
-use crate::fib::fibonacci_iterative;
+use reqwest::Client;
+use std::env;
 
-pub fn process_pr_content(pr_content: &str) -> String {
-    let numbers = extract_numbers_from_text(pr_content);
-    
-    if numbers.is_empty() {
-        return "No numbers found in the pull request.".to_string();
-    }
-    
-    let mut response = String::from("#### Fibonacci Results:\n");
-    for &num in &numbers {
-        let fib = fibonacci_iterative(num);
-        response.push_str(&format!("- Fibonacci({}) = {}\n", num, fib));
+pub async fn post_comment(pr_content: &str) -> Result<(), reqwest::Error> {
+    let repo = env::var("GITHUB_REPOSITORY").expect("GITHUB_REPOSITORY not set");
+    let pr_number = env::var("PR_NUMBER")
+        .expect("PR_NUMBER not set")
+        .parse::<u32>()
+        .expect("Invalid PR_NUMBER");
+
+    let github_token = env::var("GITHUB_TOKEN").expect("GITHUB_TOKEN not set");
+
+    let url = format!(
+        "https://api.github.com/repos/{}/issues/{}/comments",
+        repo, pr_number
+    );
+
+    let client = Client::new();
+    let response = client
+        .post(&url)
+        .header("Authorization", format!("Bearer {}", github_token))
+        .header("User-Agent", "FibBot")
+        .header("Accept", "application/vnd.github.full+json")
+        .json(&serde_json::json!({ "body": pr_content }))
+        .send()
+        .await?;
+
+    if response.status().is_success() {
+        println!("✅ Comment posted successfully.");
+    } else {
+        eprintln!("❌ Failed to post comment: {:?}", response.text().await?);
     }
 
-    response
+    Ok(())
 }
