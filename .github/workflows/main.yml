@@ -1,4 +1,4 @@
-name: "FibBot CI"
+name: "Test FibBot Action"
 on:
   push:
     branches:
@@ -8,7 +8,7 @@ on:
       - main
 
 jobs:
-  run-action:
+  test-action:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -16,3 +16,6 @@ jobs:
 
       - name: Run FibBot Action
         uses: ./
+        with:
+          enable_fib: true
+          max_threshold: 20
