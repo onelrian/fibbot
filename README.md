@@ -1,17 +1,15 @@
-# FibBot GitHub Action
-
-**FibBot** is a GitHub Action written in Rust that scans pull request content for numbers, calculates their Fibonacci numbers, and posts a comment with the results. The action supports two parameters: a flag to enable Fibonacci calculation and a threshold limit for the numbers to process.
+# **Fibbot Github Action**
+ a GitHub Action that is written in Rust, scans pull request content in search of multiple numbers, calculates Fibonacci numbers for those numbers, as well as posts a comment containing the many results. The action strengthens a flag that enables Fibonacci calculation and sets a limit for the numbers that will be processed.
 
 ---
 
-## **Features**
+It pulls numbers from what's in a pull request.
+The extracted numbers are used to compute Fibonacci numbers.
+The pull request has a comment where the results are posted.
 
-- Extracts numbers from pull request content.
-- Computes Fibonacci numbers for the extracted numbers.
-- Posts a comment on the pull request with the results.
 - Configurable parameters:
-  - `enable_fib`: Enable/disable Fibonacci calculation.
-  - `max_threshold`: Maximum number to consider for Fibonacci calculation.
+`enable_fib` can either enable or disable Fibonacci calculation.
+`max_threshold`: It's the biggest number that can be used to calculate Fibonacci.
 
 ---
 
