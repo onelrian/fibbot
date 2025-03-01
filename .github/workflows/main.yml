@@ -20,10 +20,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Rust cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Build FibBot
+        run: cargo build --release
+
       - name: Run FibBot
         uses: onelrian/fibbot@main
         with:
           pr_number: ${{ github.event.pull_request.number }}
           enable_fib: "true"
           max_threshold: "100"
-          github_token: ${{ secrets.GITHUB_TOKEN }}  
+          github_token: ${{ secrets.GITHUB_TOKEN }}
