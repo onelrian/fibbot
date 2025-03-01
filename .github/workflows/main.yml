@@ -1,8 +1,13 @@
 name: "Run FibBot"
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize]
+
+permissions:
+  contents: read
+  issues: write
+
 
 jobs:
   run-fibbot:
