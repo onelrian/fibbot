@@ -8,6 +8,10 @@ jobs:
   run-fibbot:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      pull-requests: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,6 +33,7 @@ jobs:
           key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             cargo-${{ runner.os }}-
+
       - name: Fetch modified files
         id: modified-files
         uses: tj-actions/changed-files@v34
