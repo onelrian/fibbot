@@ -44,5 +44,5 @@ jobs:
         uses: ./.github/actions
         with:
           pr_number: ${{ github.event.pull_request.number }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.PAT }} 
           modified_files: ${{ steps.modified-files.outputs.all_modified_files }}
