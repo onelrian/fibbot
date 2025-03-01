@@ -4,32 +4,23 @@ on:
   pull_request:
     types: [opened, synchronize]
 
-permissions:
-  pull-requests: write
-  contents: read
-
 jobs:
   run-fibbot:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      repository-projects: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Cache FibBot Dependencies
-        uses: actions/cache@v3
+      - name: Fetch modified files
+        id: modified-files
+        uses: tj-actions/changed-files@v34
         with:
-          path: ~/.fibbot-cache
-          key: fibbot-${{ runner.os }}-${{ github.sha }}
-          restore-keys: |
-            fibbot-${{ runner.os }}-
+          since_last_remote_commit: 'true'
 
       - name: Run FibBot
-        uses: onelrian/fibbot@main
+        uses: ./.github/actions/fibbot
         with:
-          entryPoint: "/usr/local/bin/fibbot"
-          args: "${{ github.event.pull_request.number }} ${{ secrets.TOKEN }}"
+          pr_number: ${{ github.event.pull_request.number }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          modified_files: ${{ steps.modified-files.outputs.all_modified_files }}

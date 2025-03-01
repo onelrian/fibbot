@@ -1,32 +1,32 @@
-name: "Run FibBot"
+name: "FibBot"
+description: "Computes Fibonacci numbers from modified files in a PR and posts the results as a comment."
+author: "Onel Rian"
 
-on:
-  pull_request:
-    types: [opened, synchronize]
+inputs:
+  pr_number:
+    description: "The pull request number to process."
+    required: true
+  github_token:
+    description: "The GitHub token for API access."
+    required: true
+  modified_files:
+    description: "Comma-separated list of modified files in the PR."
+    required: true
 
-permissions:
-  pull-requests: write
-  contents: read
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Rust
+      uses: actions/setup-rust@v1
+      with:
+        rust-version: 'stable'
 
-jobs:
-  run-fibbot:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
+    - name: Build the FibBot project
+      shell: bash
+      run: |
+        cargo build --release
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Rust
-        uses: actions/setup-rust@v1
-        with:
-          rust-version: 'stable'
-
-      - name: Build the FibBot project
-        run: cargo build --release
-
-      - name: Run FibBot
-        run: |
-          ./target/release/fibbot ${{ github.event.pull_request.number }} ${{ secrets.TOKEN }}
+    - name: Run FibBot
+      shell: bash
+      run: |
+        ./target/release/fibbot ${{ inputs.pr_number }} ${{ inputs.github_token }} "${{ inputs.modified_files }}"
