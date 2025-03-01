@@ -1,2 +1,1 @@
-# fibbot
-# TEST
+## Fibonacci Bot.
