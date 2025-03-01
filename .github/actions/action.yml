@@ -1,0 +1,15 @@
+name: "Rust Ticket Assistant"
+description: "Detects potential duplicate issues, relationships between tickets, and related PRs, then comments on the issue."
+author: "Onel Rian"
+inputs:
+  enable_fib:
+    description: "Action does nothing"
+    required: true
+  max_threshhold: 
+    description: "The maximum number action should compute"
+    required: true
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.pr_number }}
