@@ -36,11 +36,8 @@ jobs:
         with:
           since_last_remote_commit: 'true'
 
-      - name: Build the FibBot project
-        run: cargo build --release
-
       - name: Run FibBot
-        uses: ./.github/actions/fibbot
+        uses: ./.github/actions
         with:
           pr_number: ${{ github.event.pull_request.number }}
           github_token: ${{ secrets.GITHUB_TOKEN }}

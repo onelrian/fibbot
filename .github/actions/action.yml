@@ -16,11 +16,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Set up Rust
-      uses: actions/setup-rust@v1
-      with:
-        rust-version: 'stable'
-
     - name: Build the FibBot project
       shell: bash
       run: |
