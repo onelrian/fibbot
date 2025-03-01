@@ -2,14 +2,22 @@
 mod tests {
     use fibbot::{fib::fibonacci, reg::extract_numbers};
 
-
     #[test]
     fn test_extract_numbers() {
-        assert_eq!(extract_numbers("The numbers are 42, 13, and 7."), vec![42, 13, 7]);
+        assert_eq!(
+            extract_numbers("The numbers are 42, 13, and 7."),
+            vec![42, 13, 7]
+        );
         assert_eq!(extract_numbers("100abc200def300"), vec![100, 200, 300]);
         assert_eq!(extract_numbers("   99  "), vec![99]);
-        assert_eq!(extract_numbers("1.5 is not an integer, but 2 is."), vec![1, 5, 2]);
-        assert_eq!(extract_numbers("Multiple 007 numbers 0042 here."), vec![7, 42]);
+        assert_eq!(
+            extract_numbers("1.5 is not an integer, but 2 is."),
+            vec![1, 5, 2]
+        );
+        assert_eq!(
+            extract_numbers("Multiple 007 numbers 0042 here."),
+            vec![7, 42]
+        );
     }
 
     #[test]
