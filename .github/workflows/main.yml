@@ -12,11 +12,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Cache Cargo dependencies
+        uses: actions/cache@v3
+        id: cargo-cache
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            cargo-${{ runner.os }}-
+
       - name: Fetch modified files
         id: modified-files
         uses: tj-actions/changed-files@v34
         with:
           since_last_remote_commit: 'true'
+
+      - name: Build the FibBot project
+        run: cargo build --release
 
       - name: Run FibBot
         uses: ./.github/actions/fibbot
