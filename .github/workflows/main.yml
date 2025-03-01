@@ -20,11 +20,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run FibBot
-        uses: onelrian/fibbot@main
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
         with:
-          enable_fib: "true"
-          max_threshold: "100"
-          pr_number: ${{ github.event.pull_request.number }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          toolchain: stable
+          override: true
+
+      - name: Build the application
+        run: cargo build --release
+
+      - name: Run FibBot
+        run: |
+          ./target/release/fibbot true 100 ${{ github.event.pull_request.number }} ${{ secrets.GITHUB_TOKEN }}
