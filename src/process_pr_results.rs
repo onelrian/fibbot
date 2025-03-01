@@ -3,11 +3,7 @@ use std::env;
 use reqwest::Client;
 // use serde_json::json;
 
-pub async fn post_comment(
-    pr_number: u64,
-    github_token: &str,
-    pr_content: &str,
-) -> Result<(), reqwest::Error> {
+pub async fn post_comment(pr_number: u64, github_token: &str, pr_content: &str) -> Result<(), reqwest::Error> {
     let repo = env::var("GITHUB_REPOSITORY").expect("GITHUB_REPOSITORY not set");
     let url = format!(
         "https://api.github.com/repos/{}/issues/{}/comments",

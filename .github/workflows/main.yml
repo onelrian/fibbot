@@ -31,4 +31,4 @@ jobs:
 
       - name: Run FibBot
         run: |
-          ./target/release/fibbot true 100 ${{ github.event.pull_request.number }} ${{ secrets.GITHUB_TOKEN }}
+          ./target/release/fibbot true 100 ${{ github.event.pull_request.number }} ${{ secrets.TOKEN }}
