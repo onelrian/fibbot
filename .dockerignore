@@ -5,3 +5,34 @@
 # .gitignore
 
 # target/
+# Ignore the target directory (Rust build artifacts)
+target/
+
+# Ignore Cargo.lock (not needed for the final image)
+Cargo.lock
+
+# Ignore local development files
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Ignore local configuration files
+.env
+*.env
+
+# Ignore logs and temporary files
+*.log
+tmp/
+
+# Ignore documentation files
+README.md
+LICENSE
+
+# Ignore test files and directories
+tests/
+benches/
+examples/
+
+# Ignore Rust build cache
+.cargo/
