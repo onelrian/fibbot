@@ -1,5 +1,5 @@
-use crate::reg::extract_numbers_from_text;
 use crate::fib::fibonacci_iterative;
+use crate::reg::extract_numbers_from_text;
 use std::fs;
 
 pub fn process_modified_files(file_paths: &str) -> String {
